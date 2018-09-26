@@ -1,0 +1,28 @@
+syntax = "proto2";
+package sensuproto;
+
+// To make all of this compile:
+// protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/gogo/protobuf/protobuf --gogo_out=Mgoogle/protobuf/descriptor.proto=github.com/gogo/protobuf/protoc-gen-gogo/descriptor:. sensu.proto
+
+import "google/protobuf/descriptor.proto";
+
+option java_package = "com.google.protobuf";
+option java_outer_classname = "SensuProto";
+
+// Field identifiers have to be unique across all extensions. gogoproto
+// extends in the 60-69k range. We're going up to 80k to be a bit safe.
+// Each 
+
+// extend google.protobuf.FileOptions {
+    // extensions in the 80000-80999 range
+// }
+
+// extend google.protobuf.MessageOptions {
+    // extensions in the 81000-81999 range
+// }
+
+extend google.protobuf.FieldOptions {
+    // extensions in the 82000-82999 range
+
+    optional string default = 82000;
+}
