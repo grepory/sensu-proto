@@ -66,34 +66,57 @@ func (p *Plugin) Generate(file *generator.FileDescriptor) {
 		// Default()
 		// Generates the Default() function for the type.
 
+		// e.g. Rule
 		baseTypeName := generator.CamelCaseSlice(message.TypeName())
 
+		// "r" for use in func(r *Rule)
 		typeShort := strings.ToLower(string(baseTypeName[0]))
+		// Gives a newline
 		p.P()
+
+		// func (r *Rule) Default() {
 		p.P(`func (`, typeShort, `*`, baseTypeName, `) Default() {`)
+
+		// Indent
 		p.In()
 
+		//
 		if meta := message.GetFieldDescriptor("metadata"); meta != nil {
+			// this goes into every type.
+
+			// r.Kind = "Role"
 			p.P(typeShort, `.Kind = "`, *message.Name, `"`)
+
+			// r.ApiVersion = SchemeGroupVersion.GroupVersionString()
+			// (when executed by Go): r.ApiVersion = rbac.sensu.io/v2alpha1
 			p.P(typeShort, `.ApiVersion = SchemeGroupVersion.GroupVersionString()`)
 		}
 
+		// Now do field specific defaults. -->
 		for _, field := range message.Field {
+			// e.g. Namespace
 			fieldName := p.GetFieldName(message, field)
 
+			// GetDefault(field) -> *"somevalue"
 			if sensuDefault := GetDefault(field); sensuDefault != nil {
 				defaultValue := *sensuDefault
 
 				if field.IsString() {
+					// string namespace = 1 [(sensuproto.default = "default")]
+					// r.Namespace = "default";
 					p.P(typeShort, `.`, fieldName, `= "`, defaultValue, `"`)
 				} else if field.IsScalar() {
+					// integer version = 1 [(sensuproto.default = 1)];
+					// r.Version = 1
 					p.P(typeShort, `.`, fieldName, `= `, defaultValue)
 				}
 			}
 		}
 
+		// Unindent
 		p.Out()
 		p.P(`}`)
+		// Gives a newline
 		p.P()
 	}
 }

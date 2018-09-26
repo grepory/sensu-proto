@@ -1,5 +1,5 @@
 syntax = "proto2";
-package sensuproto;
+package protobuf;
 
 // To make all of this compile:
 // protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/gogo/protobuf/protobuf --gogo_out=Mgoogle/protobuf/descriptor.proto=github.com/gogo/protobuf/protoc-gen-gogo/descriptor:. sensu.proto
@@ -13,9 +13,15 @@ option java_outer_classname = "SensuProto";
 // extends in the 60-69k range. We're going up to 80k to be a bit safe.
 // Each 
 
-// extend google.protobuf.FileOptions {
+extend google.protobuf.FileOptions {
     // extensions in the 80000-80999 range
-// }
+
+    // Generate swagger for the proto spec.
+    optional bool swagger = 80000;
+
+    // Generate package registration.
+    optional bool register = 80001;
+}
 
 // extend google.protobuf.MessageOptions {
     // extensions in the 81000-81999 range
@@ -24,5 +30,6 @@ option java_outer_classname = "SensuProto";
 extend google.protobuf.FieldOptions {
     // extensions in the 82000-82999 range
 
+    // Add a default value to the field.
     optional string default = 82000;
 }
